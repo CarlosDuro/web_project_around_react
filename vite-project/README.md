@@ -32,7 +32,7 @@ El proyecto mantiene la funcionalidad central de gestionar perfiles de usuario m
 
 ## 📸 Vista Previa (opcional)
 
-\_![Demo de la app](images/moved_project-4-01-eng.gif)
+\_![Demo de la app](/images/moved_project-4-01-eng.gif)
 
 ## Estructura del Proyecto
 
