@@ -38,77 +38,74 @@ El proyecto mantiene la funcionalidad central de gestionar perfiles de usuario m
 
 ```plaintext
 public/
-│   vite.svg
-│
-└───images/
-    │   Addbutton.png
-    │   Avatar.jpg
-    │   baldmountains.jpg
-    │   Closeicon.svg
-    │   DS_Store
-    │   Editbutton.png
-    │   lagobraies.jpg
-    │   lake.jpg
-    │   latemar.jpg
-    │   logoaround.png
-    │   moved_project-4-01-eng.gif
-    │   Trash.png
-    │   Union.svg
-    │   vanoise.jpg
-    │   Vector.svg
-    │   yosemite.jpg
+├── vite.svg
+└── images/
+├── Addbutton.png
+├── Avatar.jpg
+├── baldmountains.jpg
+├── Closeicon.svg
+├── Editbutton.png
+├── lake.jpg
+├── lagobraies.jpg
+├── latemar.jpg
+├── logoaround.png
+├── moved_project-4-01-eng.gif
+├── Trash.png
+├── Union.svg
+├── Vector.svg
+├── vanoise.jpg
+└── yosemite.jpg
 
 src/
-│   index.css
-│   main.jsx
+├── index.css # Estilos globales
+├── main.jsx # Punto de entrada principal de la app
 │
-├───assets/
-│       react.svg
+├── assets/
+│ └── react.svg # Recursos estáticos importables
 │
-├───components/
-│   │   App.jsx
-│   │
-│   ├───Footer/
-│   │       Footer.jsx
-│   │
-│   ├───Header/
-│   │       Header.jsx
-│   │
-│   ├───ImagePopup/
-│   │       ImagePopup.jsx
-│   │
-│   └───Main/
-│       │   Main.jsx
-│       │
-│       ├───components/
-│       │   ├───Card/
-│       │   │       Card.jsx
-│       │   │
-│       │   ├───ImagePopup/
-│       │   │       ImagePopup.jsx
-│       │   │
-│       │   └───Popup/
-│       │           Popup.jsx
-│       │
-│       └───form/
-│           ├───EditAvatar/
-│           │       EditAvatar.jsx
-│           │
-│           ├───EditProfile/
-│           │       EditProfile.jsx
-│           │
-│           └───NewCard/
-│                   NewCard.jsx
+├── components/
+│ ├── App.jsx # Componente principal de la aplicación
+│ │
+│ ├── Footer/
+│ │ └── Footer.jsx
+│ │
+│ ├── Header/
+│ │ └── Header.jsx
+│ │
+│ ├── ImagePopup/
+│ │ └── ImagePopup.jsx
+│ │
+│ └── Main/
+│ ├── Main.jsx
+│ │
+│ ├── components/
+│ │ ├── Card/
+│ │ │ └── Card.jsx
+│ │ │
+│ │ ├── ImagePopup/
+│ │ │ └── ImagePopup.jsx
+│ │ │
+│ │ └── Popup/
+│ │ └── Popup.jsx
+│ │
+│ └── form/
+│ ├── EditAvatar/
+│ │ └── EditAvatar.jsx
+│ │
+│ ├── EditProfile/
+│ │ └── EditProfile.jsx
+│ │
+│ └── NewCard/
+│ └── NewCard.jsx
 
 vendor/
-│   normalize.css
-│
-└───fonts/
-        DS_Store
-        fonts.css
-        Inter-Bold.woff2
-        Inter-Regular.woff2
-        Inter-SemiBold.woff2
+├── normalize.css # Reset de estilos para navegadores
+└── fonts/
+├── fonts.css
+├── Inter-Bold.woff2
+├── Inter-Regular.woff2
+├── Inter-SemiBold.woff2
+└── DS_Store # (puede eliminarse si es innecesario en el repo)
 ```
 
 ## Tecnologías usadas
