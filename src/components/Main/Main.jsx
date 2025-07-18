@@ -1,178 +1,203 @@
-import { useState } from "react";
-import Card from "./components/Card/Card.jsx";
-import Popup from "./components/Popup/Popup.jsx";
-import NewCard from "./form/NewCard/NewCard.jsx";
+import React, { useState, useEffect, useContext } from "react";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext"; // ✅ Importar contexto
+import avatar from "../../images/profilePhoto.png";
+import pencilEditIcon from "../../images/pencilEditButton.svg";
+import Popup from "../Main/Popup/Popup";
+import NewCard from "./form/NewCard/NewCard";
 import EditProfile from "./form/EditProfile/EditProfile.jsx";
-import EditAvatar from "./form/EditAvatar/EditAvatar.jsx";
-import ImagePopup from "./components/ImagePopup/ImagePopup.jsx";
+import EditAvatar from "./form/EditAvatar/EditAvatar";
+import Card from "../Card/Card";
+import ImagePopup from "./Popup/ImagePopup";
+import ConfirmDeletePopup from "./Popup/ConfirmDeletePopup";
 
-const initialCards = [
-  {
-    isLiked: false,
-    _id: "1",
-    name: "Yosemite Valley",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
-  },
-  {
-    isLiked: false,
-    _id: "2",
-    name: "Lake Louise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
-  },
-];
+// Import styles
+import "../../../src/blocks/profile.css";
+import "../../../src/blocks/popup.css";
+import "../../../src/blocks/page.css";
+import "../../../src/blocks/mediaQueries.css";
+import "../../../src/blocks/header.css";
+import "../../../src/blocks/footer.css";
+import "@/blocks/elements.css";
 
-export default function Main() {
-  const [popupType, setPopupType] = useState(null);
+function Main({ cards, onAddPlaceSubmit, onCardDelete, onCardLike }) {
+  const { currentUser, handleUpdateUser } = useContext(CurrentUserContext); // ✅ Obtener usuario desde el contexto
+  const [popup, setPopup] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
-  const [cards, setCards] = useState(initialCards);
-  const [profile, setProfile] = useState({
-    name: "Jacques Cousteau",
-    about: "Explorer",
-  });
-  const [avatar, setAvatar] = useState("public/images/Avatar.jpg");
+  const [deleteCard, setDeleteCard] = useState(null);
 
-  function handleOpenPopup(type) {
-    setPopupType(type);
-  }
+  // Function to handle opening a popup
+  const handleOpenPopup = (popupConfig) => {
+    setPopup(popupConfig);
+  };
 
-  function handleClosePopup() {
-    setPopupType(null);
-  }
+  // Function to handle closing the current popup
+  const handleClosePopup = () => {
+    setPopup(null);
+  };
 
-  function handleCardClick(card) {
+  // Function to handle card selection (image popup)
+  const handleCardClick = (card) => {
+    console.log("Card selected for image popup:", card);
     setSelectedCard(card);
-  }
+  };
 
-  function handleCloseImagePopup() {
+  // Function to close the image popup
+  const handleCloseImagePopup = () => {
     setSelectedCard(null);
-  }
+  };
 
-  function handleCardLike(cardId) {
-    setCards((prevCards) =>
-      prevCards.map((card) =>
-        card._id === cardId ? { ...card, isLiked: !card.isLiked } : card
-      )
-    );
-  }
+  // Function to handle card deletion
+  const handleCardDelete = (card) => {
+    setDeleteCard(card);
 
-  function handleCardDelete(cardId) {
-    setCards((prevCards) => prevCards.filter((card) => card._id !== cardId));
-  }
+    // ✅ Mostrar el popup de confirmación antes de eliminar
+    handleOpenPopup({
+      title: "¿Estás seguro?",
+      type: "delete",
+      children: (
+        <ConfirmDeletePopup
+          isOpen={true}
+          onConfirm={() => confirmCardDelete(card)} // ✅ Nueva función que realmente elimina la tarjeta
+          onClose={handleClosePopup}
+        />
+      ),
+    });
+  };
 
-  function handleUpdateProfile({ name, about }) {
-    console.log("✅ Actualizando perfil:", name, about);
-    setProfile({ name, about });
-    handleClosePopup();
-  }
+  // ✅ Nueva función para eliminar la tarjeta después de la confirmación
+  const confirmCardDelete = (card) => {
+    console.log("🗑️ Confirmando eliminación de tarjeta:", card);
+    onCardDelete(card); // ✅ Llamar a la función de `App.jsx`
+    setDeleteCard(null);
+    handleClosePopup(); // ✅ Cerrar el popup después de eliminar
+  };
 
-  function handleUpdateAvatar({ avatarUrl }) {
-    console.log("✅ Actualizando avatar:", avatarUrl);
-    setAvatar(avatarUrl);
-    handleClosePopup();
-  }
-
-  function handleAddCard({ name, link }) {
-    console.log("✅ Añadiendo tarjeta:", name, link);
-    const newCard = {
-      _id: Date.now().toString(),
-      name,
-      link,
-      isLiked: false,
-    };
-    setCards([newCard, ...cards]);
-    handleClosePopup();
-  }
-
-  function getPopupContent() {
-    switch (popupType) {
-      case "editAvatar":
-        return {
-          title: "Actualizar avatar",
-          content: <EditAvatar onSubmit={handleUpdateAvatar} />,
-        };
-      case "editProfile":
-        return {
-          title: "Editar perfil",
-          content: (
-            <EditProfile profile={profile} onSubmit={handleUpdateProfile} />
-          ),
-        };
-      case "newCard":
-        return {
-          title: "Nuevo lugar",
-          content: <NewCard onSubmit={handleAddCard} />,
-        };
-      default:
-        return null;
+  // ✅ Función para manejar los likes y dislikes
+  function handleCardLike(card) {
+    if (!card) {
+      console.error("Error: card no está definido", card);
+      return;
     }
-  }
 
-  const popupContent = getPopupContent();
+    console.log("Datos de la tarjeta antes del like:", card);
+    onCardLike(card); // ✅ Llama a la función que se maneja en `App.jsx`
+  }
 
   return (
     <main className="content">
       <section className="profile">
         <div className="profile__avatar-container">
-          <img src={avatar} alt="Avatar" className="profile__avatar" />
+          <img
+            src={currentUser?.avatar || avatar} // ✅ Usar avatar del contexto
+            alt="Profile photo"
+            className="profile__photo profile__avatar"
+          />
           <button
-            className="profile__avatar-edit-button"
-            title="Editar avatar"
-            onClick={() => handleOpenPopup("editAvatar")}
+            className="profile__avatar-edit"
+            onClick={() =>
+              handleOpenPopup({
+                title: "Change Avatar",
+                type: "profile",
+                children: (
+                  <EditAvatar isOpen={true} onClose={handleClosePopup} />
+                ),
+              })
+            }
           >
-            ✎
+            <img src={pencilEditIcon} alt="Edit Avatar Icon" />
           </button>
         </div>
-
-        <div className="profile__information">
-          <div className="profile__container">
-            <h1 className="profile__name">{profile.name}</h1>
-            <button
-              className="profile__edit-button"
-              onClick={() => handleOpenPopup("editProfile")}
-            />
+        <div className="profile__info">
+          <div className="profile__info-text">
+            <h2 className="profile__info-name">
+              {currentUser?.name || "Cargando..."}{" "}
+              {/* ✅ Usar nombre del contexto */}
+            </h2>
+            <p className="profile__info-about">
+              {currentUser?.about || "Cargando..."}{" "}
+              {/* ✅ Usar descripción del contexto */}
+            </p>
           </div>
-          <p className="profile__about">{profile.about}</p>
+          <button
+            className="profile__info-edit"
+            onClick={() =>
+              handleOpenPopup({
+                title: "Edit Profile",
+                type: "profile",
+                children: (
+                  <EditProfile
+                    isOpen={true}
+                    onClose={handleClosePopup}
+                    onSubmit={handleUpdateUser} // ✅ Se pasa handleUpdateUser a EditProfile
+                    name={currentUser?.name}
+                    about={currentUser?.about}
+                  />
+                ),
+              })
+            }
+          >
+            <img
+              className="profile__info-edit-pencil"
+              src={pencilEditIcon}
+              alt="Pencil Edit Button"
+            />
+          </button>
         </div>
-
         <button
-          className="profile__add-button"
-          aria-label="Add card"
+          className="profile__add-img"
           type="button"
-          onClick={() => handleOpenPopup("newCard")}
-        />
+          onClick={() =>
+            handleOpenPopup({
+              title: "New Place",
+              type: "profile",
+              children: (
+                <NewCard
+                  onAddPlaceSubmit={onAddPlaceSubmit} // ✅ Ahora está pasando la función correcta
+                  onClosePopup={handleClosePopup} // ✅ Para cerrar el popup después de agregar
+                />
+              ),
+            })
+          }
+        >
+          Nueva Tarjeta
+        </button>
       </section>
 
-      <section className="cards">
+      {/* Card list */}
+      <section className="elements">
         <ul className="cards__list">
           {cards.map((card) => (
             <Card
               key={card._id}
               card={card}
-              onCardClick={handleCardClick}
               onCardLike={handleCardLike}
+              onCardClick={() => handleCardClick(card)}
               onCardDelete={handleCardDelete}
             />
           ))}
         </ul>
       </section>
 
-      {popupType && popupContent && (
+      {/* General popup */}
+      {popup && (
         <Popup
           onClose={handleClosePopup}
-          title={popupContent.title}
-          isOpen={true} // ✅ Necesario para mostrar el popup
+          title={popup.title}
+          type={popup.type}
+          isOpen={true}
         >
-          {popupContent.content}
+          {popup.children}
         </Popup>
       )}
 
-      {selectedCard && (
-        <ImagePopup
-          card={selectedCard}
-          onClose={handleCloseImagePopup}
-          isOpen={true}
-        />
-      )}
+      {/* Image popup */}
+      <ImagePopup
+        isOpen={!!selectedCard}
+        onClose={handleCloseImagePopup}
+        card={selectedCard}
+      />
     </main>
   );
 }
+
+export default Main;

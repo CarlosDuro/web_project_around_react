@@ -1,14 +1,16 @@
-export default function EditAvatar({ onSubmit }) {
-  function handleSubmit(e) {
+import React, { useRef, useContext } from "react"; // ✅ Importar useRef y useContext
+import "../../../../blocks/popup.css";
+import { CurrentUserContext } from "../../../../contexts/CurrentUserContext"; // ✅ Importar contexto
+
+export default function EditAvatar({ isOpen, onClose }) {
+  const avatarRef = useRef(null); // ✅ Referencia para el input
+  const { handleUpdateAvatar } = useContext(CurrentUserContext); // ✅ Obtener la función del contexto
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const avatarUrl = e.target.elements.avatar.value;
-
-    console.log("🖼 EditAvatar enviado:", avatarUrl);
-
-    if (onSubmit) {
-      onSubmit({ avatarUrl });
-    }
-  }
+    handleUpdateAvatar({ avatar: avatarRef.current.value }); // ✅ Enviar nuevo avatar
+    onClose(); // ✅ Cerrar popup después de actualizar
+  };
 
   return (
     <form
@@ -19,19 +21,17 @@ export default function EditAvatar({ onSubmit }) {
     >
       <label className="popup__field">
         <input
-          className="popup__input"
           type="url"
+          className="popup__input"
           name="avatar"
-          id="avatar-url"
-          placeholder="URL del avatar"
+          placeholder="Image URL"
           required
-          autoComplete="url"
+          ref={avatarRef} // ✅ Usar referencia para capturar el valor
         />
-        <span className="popup__error" id="avatar-url-error"></span>
+        <span className="popup__error" id="avatar-error"></span>
       </label>
-
-      <button className="popup__save-button" type="submit">
-        Actualizar
+      <button type="submit" className="popup__button">
+        Guardar
       </button>
     </form>
   );
